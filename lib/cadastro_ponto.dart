@@ -9,9 +9,10 @@ class TimeRecordPage extends StatefulWidget {
 }
 
 class _TimeRecordPageState extends State<TimeRecordPage> {
-  List<String> pontos = []; 
-  TextEditingController tempoController = TextEditingController(); 
-  int IndexSelecionado = 1; 
+  List<String> pontos = [];
+  TextEditingController tempoController = TextEditingController();
+  int indexSelecionado = 1;
+  String selectedPonto = '';
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,14 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: <Widget>[
+            Text(
+              'Bem-vindo(a)!',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
             TextFormField(
               controller: tempoController,
               decoration: const InputDecoration(
@@ -50,6 +59,14 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(pontos[index]),
+                    onTap: () {
+                      setState(() {
+                        selectedPonto = pontos[index];
+                      });
+                    },
+                    tileColor: selectedPonto == pontos[index]
+                        ? Colors.grey.withOpacity(0.5)
+                        : null,
                   );
                 },
               ),
@@ -64,11 +81,14 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
             label: 'Perfil',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.access_time, color: Colors.purple,),
+            icon: Icon(
+              Icons.access_time,
+              color: Colors.purple,
+            ),
             label: 'Registro',
           ),
         ],
-        currentIndex: IndexSelecionado,
+        currentIndex: indexSelecionado,
         onTap: itemPressionado,
       ),
     );
@@ -85,7 +105,7 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
 
   void itemPressionado(int index) {
     setState(() {
-      IndexSelecionado = index;
+      indexSelecionado = index;
       switch (index) {
         case 0:
           Navigator.push(
@@ -94,7 +114,6 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
           );
           break;
         case 1:
-          
           break;
       }
     });

@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  final TextEditingController controladorEmail = TextEditingController();
+  final TextEditingController controladorConfirmarEmail =
+      TextEditingController();
+  final TextEditingController controladorSenha = TextEditingController();
+  final TextEditingController controladorConfirmarSenha =
+      TextEditingController();
+
+  RegisterPage({Key? key}) : super(key: key) {
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +21,7 @@ class RegisterPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('../assets/images/logo_no_background.png'), 
+            Image.asset('../assets/images/logo_no_background.png'),
             const SizedBox(height: 30),
             TextField(
               keyboardType: TextInputType.emailAddress,
@@ -20,6 +29,7 @@ class RegisterPage extends StatelessWidget {
                 labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
+              controller: controladorEmail,
             ),
             const SizedBox(height: 20),
             TextField(
@@ -28,6 +38,7 @@ class RegisterPage extends StatelessWidget {
                 labelText: 'Confirme o Email',
                 border: OutlineInputBorder(),
               ),
+              controller: controladorConfirmarEmail,
             ),
             const SizedBox(height: 20),
             TextField(
@@ -36,6 +47,7 @@ class RegisterPage extends StatelessWidget {
                 labelText: 'Senha',
                 border: OutlineInputBorder(),
               ),
+              controller: controladorSenha,
             ),
             const SizedBox(height: 20),
             TextField(
@@ -44,12 +56,11 @@ class RegisterPage extends StatelessWidget {
                 labelText: 'Confirme a senha',
                 border: OutlineInputBorder(),
               ),
+              controller: controladorConfirmarSenha,
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                
-              },
+              onPressed: () => registrar(context),
               child: const Text('Cadastrar'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
@@ -64,5 +75,38 @@ class RegisterPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void registrar(BuildContext context) async {
+    if (controladorEmail.text == controladorConfirmarEmail.text &&
+        controladorSenha.text == controladorConfirmarSenha.text) {
+      final preferencias = await SharedPreferences.getInstance();
+      preferencias.setString('email', controladorEmail.text);
+      preferencias.setString('senha', controladorSenha.text);
+
+      print(controladorEmail.text);
+      print(controladorSenha.text);
+
+      Navigator.pop(context);
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Dados inválidos'),
+            content:
+                const Text('Os campos de email e/ou senha não correspondem'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
