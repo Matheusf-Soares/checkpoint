@@ -11,7 +11,7 @@ class TimeRecordPage extends StatefulWidget {
 }
 
 class _TimeRecordPageState extends State<TimeRecordPage> {
-  List<String> horarios = [];
+  List<String> pontos = [];
   TextEditingController tempoController = TextEditingController();
   int indexSelecionado = 1;
   String selectedPonto = '';
@@ -93,16 +93,16 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
                   const SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: horarios.length,
+                      itemCount: pontos.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(horarios[index]),
+                          title: Text(pontos[index]),
                           onTap: () {
                             setState(() {
-                              selectedPonto = horarios[index];
+                              selectedPonto = pontos[index];
                             });
                           },
-                          tileColor: selectedPonto == horarios[index]
+                          tileColor: selectedPonto == pontos[index]
                               ? Colors.grey.withOpacity(0.5)
                               : null,
                         );
@@ -144,7 +144,7 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
         var now = DateTime.now();
         var formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
         String formatted = formatter.format(now);
-        horarios.add("$formatted - ${tempoController.text}");
+        pontos.add("$formatted - ${tempoController.text}");
         tempoController.clear();
       });
     }
@@ -152,6 +152,7 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
 
   void itemPressionado(int index) {
     setState(() {
+      indexSelecionado = index;
       indexSelecionado = index;
       switch (index) {
         case 0:
