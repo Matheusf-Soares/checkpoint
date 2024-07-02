@@ -70,20 +70,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.purple),
-            label: 'Perfil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: 'Registro',
-          ),
-        ],
-        currentIndex: 0,
-        onTap: (index) => Navigator.pop(context, false),
-      ),
+      
     );
   }
 }

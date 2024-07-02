@@ -1,3 +1,4 @@
+import 'package:checkpoint_/inicio.dart';
 import 'package:flutter/material.dart';
 import 'package:checkpoint_/cadastro.dart';
 import 'package:checkpoint_/cadastro_ponto.dart';
@@ -97,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
     if (email == controladorEmail.text && senha == controladorSenha.text) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const TimeRecordPage()),
+        MaterialPageRoute(builder: (context) => InicioPage()),
       );
     } else {
       showDialog(

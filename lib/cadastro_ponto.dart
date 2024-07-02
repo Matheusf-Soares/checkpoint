@@ -112,26 +112,6 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
                 ],
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: BottomNavigationBar(
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.account_circle, color: Colors.purple),
-                    label: 'Perfil',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.access_time,
-                      color: Colors.purple,
-                    ),
-                    label: 'Registro',
-                  ),
-                ],
-                currentIndex: indexSelecionado,
-                onTap: itemPressionado,
-              ),
-            ),
           ],
         ),
       ),
@@ -152,7 +132,6 @@ class _TimeRecordPageState extends State<TimeRecordPage> {
 
   void itemPressionado(int index) {
     setState(() {
-      indexSelecionado = index;
       indexSelecionado = index;
       switch (index) {
         case 0:
