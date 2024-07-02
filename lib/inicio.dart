@@ -2,8 +2,13 @@ import 'package:checkpoint_/cadastro.dart';
 import 'package:checkpoint_/perfil.dart';
 import 'package:flutter/material.dart';
 
+import 'cadastro_ponto.dart';
+import 'models/usuario.dart';
+
 class InicioPage extends StatefulWidget {
-  InicioPage({Key? key}) : super(key: key);
+  final Usuario usuario;
+
+  InicioPage({required this.usuario});
 
   @override
   _InicioPageState createState() => _InicioPageState();
@@ -23,7 +28,7 @@ class _InicioPageState extends State<InicioPage> {
     ),
   ];
 
-  final List<Widget> listaPaginas = [ProfilePage(), RegisterPage()];
+  final List<Widget> listaPaginas = [ProfilePage(), TimeRecordPage()];
 
   @override
   Widget build(BuildContext context) {

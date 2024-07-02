@@ -1,9 +1,10 @@
-import 'package:checkpoint_/inicio.dart';
 import 'package:flutter/material.dart';
-import 'package:checkpoint_/cadastro.dart';
-import 'package:checkpoint_/cadastro_ponto.dart';
-import 'package:checkpoint_/senha_esquecida.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'models/usuario.dart';
+import 'services/usuario.service.dart';
+import 'inicio.dart';
+import 'cadastro.dart';
+import 'senha_esquecida.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController controladorEmail = TextEditingController();
   final TextEditingController controladorSenha = TextEditingController();
+  final UsuarioService usuarioService = UsuarioService();
 
   @override
   void initState() {
@@ -68,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ForgotPasswordPage()),
+                      builder: (context) => ForgotPasswordPage()),
                 );
               },
               child: const Text('Esqueci a senha'),
@@ -94,31 +96,50 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void logar(BuildContext context, String email, String senha) {
-    if (email == controladorEmail.text && senha == controladorSenha.text) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => InicioPage()),
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Dados inválidos'),
-            content: const Text('Usuário e/ou senha incorreto(a)'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+  void logar(BuildContext context, String email, String senha) async {
+    UsuarioParcial usuarioParcial = UsuarioParcial(email: email, senha: senha);
+    try {
+      final response = await usuarioService.verificaUsuario(usuarioParcial);
+      if (response['message'] == 'Usuário encontrado') {
+        // Salvar dados do usuário nas preferências compartilhadas
+        final preferencias = await SharedPreferences.getInstance();
+        preferencias.setString('email', email);
+        preferencias.setString('senha', senha);
+
+        Usuario usuario = Usuario.fromJson(response['user']);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InicioPage(usuario: usuario),
+          ),
+        );
+      } else {
+        _showMessage(context, response['message']);
+      }
+    } catch (e) {
+      _showMessage(context, 'Erro ao autenticar usuário: $e');
     }
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Mensagem'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _recuperaDados() async {

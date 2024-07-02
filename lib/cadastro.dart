@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'models/usuario.dart';
+import 'services/usuario.service.dart';
 
 class RegisterPage extends StatelessWidget {
   final TextEditingController controladorEmail = TextEditingController();
-  final TextEditingController controladorConfirmarEmail =
-      TextEditingController();
+  final TextEditingController controladorConfirmarEmail = TextEditingController();
   final TextEditingController controladorSenha = TextEditingController();
-  final TextEditingController controladorConfirmarSenha =
-      TextEditingController();
+  final TextEditingController controladorConfirmarSenha = TextEditingController();
+  final UsuarioService usuarioService = UsuarioService();
 
-  RegisterPage({Key? key}) : super(key: key) {
-  }
+  RegisterPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Cadastro de Usuário"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Container(
         padding: const EdgeInsets.all(20),
         color: Colors.white,
@@ -74,40 +83,82 @@ class RegisterPage extends StatelessWidget {
           ],
         ),
       ),
-      
     );
   }
 
   void registrar(BuildContext context) async {
     if (controladorEmail.text == controladorConfirmarEmail.text &&
         controladorSenha.text == controladorConfirmarSenha.text) {
-      final preferencias = await SharedPreferences.getInstance();
-      preferencias.setString('email', controladorEmail.text);
-      preferencias.setString('senha', controladorSenha.text);
+      try {
+        Usuario novoUsuario = Usuario(
+          id: null, // Pode ser null na criação
+          email: controladorEmail.text,
+          senha: controladorSenha.text,
+          name: '',
+          estado: '',
+          idade: null,
+        );
 
-      print(controladorEmail.text);
-      print(controladorSenha.text);
+        final response = await usuarioService.addUsuario(novoUsuario);
 
-      Navigator.pop(context);
+        if (response['message'] == 'Usuário criado') {
+          final preferencias = await SharedPreferences.getInstance();
+          preferencias.setString('email', controladorEmail.text);
+          preferencias.setString('senha', controladorSenha.text);
+
+          print(controladorEmail.text);
+          print(controladorSenha.text);
+
+          _showSuccess(context, 'Usuário criado com sucesso');
+        } else {
+          _showError(context, response['message']);
+        }
+      } catch (e) {
+        _showError(context, e.toString());
+      }
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Dados inválidos'),
-            content:
-                const Text('Os campos de email e/ou senha não correspondem'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      _showError(context, 'Os campos de email e/ou senha não correspondem');
     }
+  }
+
+  void _showSuccess(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sucesso'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pop(context); // Fecha a tela de cadastro e retorna para a tela anterior
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showError(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Erro'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
