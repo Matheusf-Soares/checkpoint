@@ -1,6 +1,8 @@
 import 'package:checkpoint_/login.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'models.dart'; // Adicionado
+import 'api_service.dart'; // Adicionado
 
 class TelaTemporaria extends StatefulWidget {
   const TelaTemporaria({Key? key}) : super(key: key);
@@ -46,7 +48,6 @@ class _TelaTemporariaState extends State<TelaTemporaria> {
   }
 }
 
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -69,7 +70,33 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Necessário para inicialização assíncrona
+  final apiService = ApiService();
+
+  // Exemplo de uso para UsuarioParcial
+  final usuarioParcial = UsuarioParcial(email: 'exemplo@email.com', senha: '123456');
+  final dataParcial = usuarioParcial.toMap();
+
+  // Chamada da API para adicionar um novo usuário (parcial)
+  final responseParcial = await apiService.post(dataParcial);
+  print(responseParcial);
+
+  // Exemplo de uso para Usuario
+  final usuario = Usuario(
+    id: 1,
+    name: 'John Doe',
+    estado: 'SP',
+    idade: 30,
+    email: 'exemplo@email.com',
+    senha: '123456',
+  );
+  final dataCompleto = usuario.toMap();
+
+  // Chamada da API para adicionar um novo usuário (completo)
+  final responseCompleto = await apiService.post(dataCompleto);
+  print(responseCompleto);
+
   runApp(const MaterialApp(
     home: TelaTemporaria(),
     debugShowCheckedModeBanner: false,
